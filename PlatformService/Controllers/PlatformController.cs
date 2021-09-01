@@ -4,7 +4,9 @@ using PlatformService.Data;
 using PlatformService.Dtos;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using PlatformService.Models;
+using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService.Controllers
 {
@@ -14,11 +16,13 @@ namespace PlatformService.Controllers
     {
         private readonly IPlatformRepo _repo;
         private readonly IMapper _mapper;
+        private readonly ICommandDataClient _commandClient;
 
-        public PlatformController(IPlatformRepo repo, IMapper mapper)
+        public PlatformController(IPlatformRepo repo, IMapper mapper, ICommandDataClient commandClient)
         {
             _repo = repo;
             _mapper = mapper;
+            _commandClient = commandClient;
         }
 
         [HttpGet]
@@ -45,7 +49,7 @@ namespace PlatformService.Controllers
         }
 
         [HttpPost]
-        public ActionResult<PlatformReadDto> CreatePlatform(PlatformCreateDto platform)
+        public async Task<ActionResult<PlatformReadDto>> CreatePlatform(PlatformCreateDto platform)
         {
             var platformTemp = _mapper.Map<Platform>(platform);
 
@@ -53,6 +57,15 @@ namespace PlatformService.Controllers
             _repo.SaveChanges();
 
             var platformRead = _mapper.Map<PlatformReadDto>(platformTemp);
+
+            try
+            {
+                await _commandClient.SendPlatformToCommand(platformRead);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send synchronise: {ex.Message}");
+            }
 
             return CreatedAtRoute(nameof(GetPlatformById),new {Id = platformRead.Id}, platformRead);
         }
