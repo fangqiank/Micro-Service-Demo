@@ -54,8 +54,8 @@ namespace PlatformService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PlatformService v1"));
             }
 
-            app.UseHttpsRedirection();
-
+            app.UseHttpsRedirection(); //Issue a warning: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3],Failed to determine the https port for redirect.
+            
             app.UseRouting();
 
             app.UseAuthorization();

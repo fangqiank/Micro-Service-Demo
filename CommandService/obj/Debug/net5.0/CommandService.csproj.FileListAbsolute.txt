@@ -36,4 +36,3 @@ D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.dl
 D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\ref\CommandService.dll
 D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.pdb
 D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.genruntimeconfig.cache
-D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.csproj.AssemblyReference.cache
