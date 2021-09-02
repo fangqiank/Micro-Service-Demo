@@ -24,4 +24,18 @@ kubectl get services
 NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
 kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP        23h
 platformservice-srv   NodePort    10.111.229.151   <none>        80:32517/TCP   85s  //32571 is port for k8s
+
+kubectl rollout restart deployment platforms-depl
+deployment.apps/platforms-depl restarted
+
+kubectl apply -f commands-depl.yaml
+deployment.apps/commands-depl created
+service/commands-clusterip-srv created
+
+kubectl get services
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+commands-clusterip-srv    ClusterIP   10.108.210.199   <none>        80/TCP         76s
+kubernetes                ClusterIP   10.96.0.1        <none>        443/TCP        47h
+platforms-clusterip-srv   ClusterIP   10.104.55.64     <none>        80/TCP         17m
+platformservice-srv       NodePort    10.111.229.151   <none>        80:32517/TCP   24h
 ```
