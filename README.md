@@ -38,4 +38,20 @@ commands-clusterip-srv    ClusterIP   10.108.210.199   <none>        80/TCP     
 kubernetes                ClusterIP   10.96.0.1        <none>        443/TCP        47h
 platforms-clusterip-srv   ClusterIP   10.104.55.64     <none>        80/TCP         17m
 platformservice-srv       NodePort    10.111.229.151   <none>        80:32517/TCP   24h
+
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
+
+kubectl get namespace
+NAME              STATUS   AGE
+default           Active   2d
+ingress-nginx     Active   2m9s
+kube-node-lease   Active   2d
+kube-public       Active   2d
+kube-system       Active   2d
+
+kubectl get pods --namespace=ingress-nginx
+NAME                                       READY   STATUS      RESTARTS   AGE
+ingress-nginx-admission-create-nft2f       0/1     Completed   0          4m20s
+ingress-nginx-admission-patch-6t6l4        0/1     Completed   1          4m20s
+ingress-nginx-controller-fd7bb8d66-jxfrc   1/1     Running     0          4m22s
 ```
