@@ -54,4 +54,30 @@ NAME                                       READY   STATUS      RESTARTS   AGE
 ingress-nginx-admission-create-nft2f       0/1     Completed   0          4m20s
 ingress-nginx-admission-patch-6t6l4        0/1     Completed   1          4m20s
 ingress-nginx-controller-fd7bb8d66-jxfrc   1/1     Running     0          4m22s
+
+kubectl apply -f ingress-srv.yaml
+ingress.networking.k8s.io/ingress-srv created
+
+kubectl get storageclass
+NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+hostpath (default)   docker.io/hostpath   Delete          Immediate           false                  2d22h
+
+kubectl apply -f local-pvc.yaml
+persistentvolumeclaim/mssql-claim created
+
+kubectl get pvc
+NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mssql-claim   Bound    pvc-9eee3ac9-b657-4068-9606-bcc33a7eee4e   200Mi      RWX            hostpath       74s
+
+kubectl get storageclass
+NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+hostpath (default)   docker.io/hostpath   Delete          Immediate           false                  2d22h
+
+kubectl create secret generic mssql --from-literal=SA_PASSWORD="xxxxx"
+secret/mssql created
+
+kubectl apply -f mssql-plat-depl.yaml
+deployment.apps/mssql-depl created
+service/mssql-clusterip-srv created
+service/mssql-loadbalance created
 ```
