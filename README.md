@@ -80,4 +80,19 @@ kubectl apply -f mssql-plat-depl.yaml
 deployment.apps/mssql-depl created
 service/mssql-clusterip-srv created
 service/mssql-loadbalance created
+
+kubectl get services
+ NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+commands-clusterip-srv    ClusterIP      10.108.210.199   <none>        80/TCP           23h
+kubernetes                ClusterIP      10.96.0.1        <none>        443/TCP          2d23h
+mssql-clusterip-srv       ClusterIP      10.111.155.104   <none>        1433/TCP         112s
+mssql-loadbalance         LoadBalancer   10.96.227.145    localhost     1433:32537/TCP   111s
+platforms-clusterip-srv   ClusterIP      10.104.55.64     <none>        80/TCP           23h
+platformservice-srv       NodePort       10.111.229.151   <none>        80:32517/TCP     47h
+
+kubectl get pods
+NAME                             READY   STATUS    RESTARTS   AGE
+commands-depl-c4fcc556b-htfvc    1/1     Running   2          23h
+mssql-depl-856b8c48fd-qg4w6      1/1     Running   2          12m
+platforms-depl-7d9588c8f-lgftv   1/1     Running   2          24h
 ```
