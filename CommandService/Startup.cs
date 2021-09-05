@@ -1,6 +1,8 @@
 using System;
+using CommandService.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -11,6 +13,13 @@ namespace CommandService
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<AppDbContext>(opt =>
+            {
+                opt.UseInMemoryDatabase("InMemoryDb");
+            });
+
+            services.AddScoped<ICommandRepo, CommandRepo>();
+
             services.AddControllers();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
