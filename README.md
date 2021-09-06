@@ -95,4 +95,34 @@ NAME                             READY   STATUS    RESTARTS   AGE
 commands-depl-c4fcc556b-htfvc    1/1     Running   2          23h
 mssql-depl-856b8c48fd-qg4w6      1/1     Running   2          12m
 platforms-depl-7d9588c8f-lgftv   1/1     Running   2          24h
+
+kubectl apply -f .\rabbitmq-depl.yaml
+deployment.apps/rabbitmq-depl created
+service/rabbitmq-clusterip-srv created
+service/rabbitmq-loadbalance created
+
+kubectl get services
+NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                          AGE
+commands-clusterip-srv    ClusterIP      10.108.210.199   <none>        80/TCP                           4d8h
+kubernetes                ClusterIP      10.96.0.1        <none>        443/TCP                          6d7h
+mssql-clusterip-srv       ClusterIP      10.104.15.29     <none>        1433/TCP                         2d6h
+mssql-loadbalance         LoadBalancer   10.111.0.230     localhost     1433:30153/TCP                   2d6h
+platforms-clusterip-srv   ClusterIP      10.104.55.64     <none>        80/TCP                           4d8h
+platformservice-srv       NodePort       10.111.229.151   <none>        80:32517/TCP                     5d8h
+rabbitmq-clusterip-srv    ClusterIP      10.108.157.223   <none>        15672/TCP,5672/TCP               37s
+rabbitmq-loadbalance      LoadBalancer   10.103.7.24      localhost     15672:32267/TCP,5672:31001/TCP   37s
+
+kubectl get deployments
+NAME             READY   UP-TO-DATE   AVAILABLE   AGE
+commands-depl    1/1     1            1           4d8h
+mssql-depl       1/1     1            1           2d6h
+platforms-depl   1/1     1            1           2d7h
+rabbitmq-depl    1/1     1            1           98s
+
+kubectl get pods
+NAME                              READY   STATUS    RESTARTS   AGE
+commands-depl-c4fcc556b-htfvc     1/1     Running   8          4d8h
+mssql-depl-856b8c48fd-4bf84       1/1     Running   4          2d6h
+platforms-depl-687d4d5548-gzf52   1/1     Running   8          2d7h
+rabbitmq-depl-76f9ff665c-5v5l8    1/1     Running   0          106s
 ```
