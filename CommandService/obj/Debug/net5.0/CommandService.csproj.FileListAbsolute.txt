@@ -38,3 +38,4 @@ D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.pd
 D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.genruntimeconfig.cache
 D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\appsettings.Production.json
 D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\RabbitMQ.Client.dll
+D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.csproj.AssemblyReference.cache

@@ -32,7 +32,7 @@ namespace CommandService.AsyncDataServices
 
             var consumer = new EventingBasicConsumer(_channel);
 
-            consumer.Received += (ModuleHandle, ea) =>
+            consumer.Received += (moduleHandle, ea) =>
             {
                 Console.WriteLine("--> Event received");
 
@@ -54,6 +54,9 @@ namespace CommandService.AsyncDataServices
                 HostName = _configuration["RabbitMQHost"],
                 Port = int.Parse(_configuration["RabbitMQPort"])
             };
+
+            //Console.WriteLine($"Hostname: {_configuration["RabbitMQHost"]}");
+            //Console.WriteLine($"Port: {_configuration["RabbitMQPort"]}");
 
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
