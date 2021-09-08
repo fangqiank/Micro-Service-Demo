@@ -5,6 +5,7 @@ using PlatformService.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using PlatformService.AsyncDataServices;
 using PlatformService.Models;
 using PlatformService.SyncDataServices.Http;
 
@@ -17,12 +18,19 @@ namespace PlatformService.Controllers
         private readonly IPlatformRepo _repo;
         private readonly IMapper _mapper;
         private readonly ICommandDataClient _commandClient;
+        private readonly IMessageBusClient _messageBus;
 
-        public PlatformController(IPlatformRepo repo, IMapper mapper, ICommandDataClient commandClient)
+        public PlatformController(
+            IPlatformRepo repo, 
+            IMapper mapper, 
+            ICommandDataClient commandClient, 
+            IMessageBusClient messageBus
+            )
         {
             _repo = repo;
             _mapper = mapper;
             _commandClient = commandClient;
+            _messageBus = messageBus;
         }
 
         [HttpGet]
@@ -56,18 +64,32 @@ namespace PlatformService.Controllers
             _repo.CreatePlatform(platformTemp);
             _repo.SaveChanges();
 
-            var platformRead = _mapper.Map<PlatformReadDto>(platformTemp);
+            var platformReadDto = _mapper.Map<PlatformReadDto>(platformTemp);
 
+            //send sync message
             try
             {
-                await _commandClient.SendPlatformToCommand(platformRead);
+                await _commandClient.SendPlatformToCommand(platformReadDto);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"--> Could not send synchronise: {ex.Message}");
             }
 
-            return CreatedAtRoute(nameof(GetPlatformById),new {Id = platformRead.Id}, platformRead);
+            //send async message
+            try
+            {
+                var platformPublishedDto = _mapper.Map<PlatformPublishDto>(platformReadDto);
+                platformPublishedDto.Event = "Platform_Published";
+
+                _messageBus.PublishNewPlatform(platformPublishedDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not send asynchronous: {ex.Message}");
+            }
+
+            return CreatedAtRoute(nameof(GetPlatformById),new {Id = platformReadDto.Id}, platformReadDto);
         }
     }
 }

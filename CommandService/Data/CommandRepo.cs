@@ -39,6 +39,11 @@ namespace CommandService.Data
             return _ctx.Platforms.Any(x => x.Id == platformId);
         }
 
+        public bool ExternalPlatformExists(int externalPlatformId)
+        {
+            return _ctx.Platforms.Any(x => x.ExternalId == externalPlatformId);
+        }
+
         public IEnumerable<Command> GetCommandsForPlatform(int platformId)
         {
             return _ctx.Commands
