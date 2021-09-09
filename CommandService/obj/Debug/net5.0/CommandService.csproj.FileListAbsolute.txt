@@ -39,3 +39,7 @@ D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.ge
 D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\appsettings.Production.json
 D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\RabbitMQ.Client.dll
 D:\dotnetcore\MicroServiceDemo\CommandService\obj\Debug\net5.0\CommandService.csproj.AssemblyReference.cache
+D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\Google.Protobuf.dll
+D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\Grpc.Core.Api.dll
+D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\Grpc.Net.Client.dll
+D:\dotnetcore\MicroServiceDemo\CommandService\bin\Debug\net5.0\Grpc.Net.Common.dll
