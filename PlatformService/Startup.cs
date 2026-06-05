@@ -33,7 +33,14 @@ namespace PlatformService
                 Console.WriteLine("--> Using PostgreSQL Db");
                 services.AddDbContext<AppDbContext>(opt =>
                 {
-                    opt.UseNpgsql(Configuration.GetConnectionString("PlatformsConn"));
+                    var connStr = Configuration.GetConnectionString("PlatformsConn");
+                    // In K8S, password is injected via environment variable; substitute placeholder
+                    var dbPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+                    if (!string.IsNullOrEmpty(dbPassword))
+                    {
+                        connStr = connStr.Replace("PA55W0RD_PLACEHOLDER", dbPassword);
+                    }
+                    opt.UseNpgsql(connStr);
                 });
             }
             else

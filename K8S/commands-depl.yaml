@@ -15,6 +15,7 @@ spec:
       containers:
         - name: commandservice
           image: huamu/commandservice:latest
+          # imagePullPolicy: Never — local development only; remove for production deployments
           imagePullPolicy: Never
 ---
 apiVersion: v1

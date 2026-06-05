@@ -23,10 +23,22 @@ namespace PlatformService.AsyncDataServices
         {
             if (_connection != null && _connection.IsOpen) return;
 
+            // Close stale connection/channel before creating new ones to prevent resource leaks
+            if (_channel?.IsOpen == true)
+            {
+                await _channel.CloseAsync();
+                _channel = null;
+            }
+            if (_connection?.IsOpen == true)
+            {
+                await _connection.CloseAsync();
+                _connection = null;
+            }
+
             var factory = new ConnectionFactory
             {
-                HostName = _configuration["RabbitMQHost"],
-                Port = int.Parse(_configuration["RabbitMQPort"])
+                HostName = _configuration["RabbitMQHost"] ?? "localhost",
+                Port = int.TryParse(_configuration["RabbitMQPort"], out var port) ? port : 5672
             };
 
             try

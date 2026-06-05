@@ -25,9 +25,9 @@ namespace CommandService.SyncDataServices.Grpc
 
         public IEnumerable<Platform> ReturnAllPlatforms()
         {
-            Console.WriteLine($"--> Calling GRPC Service {_configuration["GrpcPlatform"]}");
+            _logger.LogInformation("--> Calling GRPC Service {GrpcUrl}", _configuration["GrpcPlatform"]);
 
-            var channel = GrpcChannel.ForAddress(_configuration["GrpcPlatform"]);
+            using var channel = GrpcChannel.ForAddress(_configuration["GrpcPlatform"]);
             var client = new GrpcPlatform.GrpcPlatformClient(channel);
             var request = new GetAllRequest();
 
@@ -43,17 +43,19 @@ namespace CommandService.SyncDataServices.Grpc
                 }
                 catch (RpcException ex) when (attempt < maxRetries)
                 {
-                    Console.WriteLine($"--> GRPC attempt {attempt}/{maxRetries} failed: {ex.Status.Detail}. Retrying in {delayMs}ms...");
+                    _logger.LogWarning("--> GRPC attempt {Attempt}/{MaxRetries} failed: {Detail}. Retrying in {Delay}ms...",
+                        attempt, maxRetries, ex.Status.Detail, delayMs);
+                    // Synchronous call from startup Configure(); Thread.Sleep is acceptable here
                     System.Threading.Thread.Sleep(delayMs);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"--> Could not call grpc server {ex.Message}");
+                    _logger.LogError(ex, "--> Could not call grpc server");
                     return null;
                 }
             }
 
-            Console.WriteLine($"--> Could not call grpc server after {maxRetries} attempts");
+            _logger.LogError("--> Could not call grpc server after {MaxRetries} attempts", maxRetries);
             return null;
         }
     }

@@ -30,8 +30,8 @@ namespace CommandService.AsyncDataServices
 
             var factory = new ConnectionFactory
             {
-                HostName = _configuration["RabbitMQHost"],
-                Port = int.Parse(_configuration["RabbitMQPort"]!)
+                HostName = _configuration["RabbitMQHost"] ?? "localhost",
+                Port = int.TryParse(_configuration["RabbitMQPort"], out var port) ? port : 5672
             };
 
             const int maxRetries = 5;
@@ -100,15 +100,33 @@ namespace CommandService.AsyncDataServices
             Console.WriteLine($"--> Could not connect to RabbitMQ after {maxRetries} attempts");
         }
 
-        public override async void Dispose()
+        public override async Task StopAsync(CancellationToken cancellationToken)
         {
+            Console.WriteLine("--> MessageBusSubscriber stopping...");
+
             if (_channel?.IsOpen == true)
             {
-                await _channel.CloseAsync();
+                await _channel.CloseAsync(cancellationToken);
             }
             if (_connection?.IsOpen == true)
             {
-                await _connection.CloseAsync();
+                await _connection.CloseAsync(cancellationToken);
+            }
+
+            await base.StopAsync(cancellationToken);
+        }
+
+        public override void Dispose()
+        {
+            // Synchronous fallback — StopAsync handles the graceful async path during normal shutdown.
+            // RabbitMQ.Client 7.x only exposes async close; blocking here is acceptable in Dispose context.
+            if (_channel?.IsOpen == true)
+            {
+                _channel.CloseAsync().GetAwaiter().GetResult();
+            }
+            if (_connection?.IsOpen == true)
+            {
+                _connection.CloseAsync().GetAwaiter().GetResult();
             }
 
             base.Dispose();

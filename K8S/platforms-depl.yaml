@@ -15,7 +15,14 @@ spec:
       containers:
         - name: platformservice
           image: huamu/platformservice:latest
+          # imagePullPolicy: Never — local development only; remove for production deployments
           imagePullPolicy: Never
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: POSTGRES_PASSWORD
 ---
 apiVersion: v1
 kind: Service
