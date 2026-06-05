@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 750" width="1100" height="750">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 780" width="1100" height="780">
   <defs>
-    <!-- Gradient Definitions -->
     <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
@@ -27,7 +26,6 @@
       <stop offset="100%" style="stop-color:#0284c7;stop-opacity:1" />
     </linearGradient>
 
-    <!-- Arrow Markers -->
     <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
       <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6"/>
     </marker>
@@ -50,7 +48,6 @@
       <path d="M0,0 L0,6 L9,3 z" fill="#ef4444"/>
     </marker>
 
-    <!-- Shadow filter -->
     <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.1"/>
     </filter>
@@ -70,288 +67,261 @@
     text { font-family: 'Segoe UI', Arial, sans-serif; }
   </style>
 
-  <!-- White background -->
-  <rect width="1100" height="750" fill="#ffffff" rx="4"/>
+  <rect width="1100" height="780" fill="#ffffff" rx="4"/>
 
-  <!-- Subtle grid -->
-  <g opacity="0.08">
+  <g opacity="0.06">
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
       <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#94a3b8" stroke-width="0.5"/>
     </pattern>
-    <rect width="1100" height="750" fill="url(#grid)"/>
+    <rect width="1100" height="780" fill="url(#grid)"/>
   </g>
 
   <!-- Title -->
-  <text x="550" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#1e293b">MicroServiceDemo Architecture</text>
-  <text x="550" y="50" text-anchor="middle" font-size="12" fill="#94a3b8">.NET 10 Microservices on Kubernetes</text>
+  <text x="550" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1e293b">MicroServiceDemo — 微服务架构图</text>
+  <text x="550" y="50" text-anchor="middle" font-size="12" fill="#94a3b8">.NET 10 · PostgreSQL 16 · RabbitMQ 3 · Kubernetes</text>
 
-  <!-- ============================================================ -->
-  <!-- EXTERNAL CLIENT (outside K8s) -->
-  <!-- ============================================================ -->
-  <g transform="translate(480, 70)" filter="url(#shadowSmall)">
+  <!-- External Client -->
+  <g transform="translate(480, 68)" filter="url(#shadowSmall)">
     <rect x="0" y="0" width="140" height="44" rx="22" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
     <text x="70" y="18" text-anchor="middle" font-size="10" font-weight="bold" fill="#475569">External Client</text>
     <text x="70" y="32" text-anchor="middle" font-size="9" fill="#94a3b8">acme.com</text>
   </g>
 
-  <!-- ============================================================ -->
-  <!-- K8S BOUNDARY -->
-  <!-- ============================================================ -->
-  <rect x="30" y="130" width="1040" height="520" rx="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="10, 5"/>
-  <!-- K8s label -->
-  <g transform="translate(50, 148)">
-    <!-- K8s icon (simplified wheel) -->
+  <!-- K8S Cluster Boundary -->
+  <rect x="30" y="128" width="1040" height="535" rx="16" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="10, 5"/>
+  <g transform="translate(50, 146)">
     <circle cx="10" cy="10" r="10" fill="none" stroke="#326ce5" stroke-width="1.5"/>
     <circle cx="10" cy="10" r="3" fill="#326ce5"/>
     <line x1="10" y1="0" x2="10" y2="4" stroke="#326ce5" stroke-width="1.5"/>
     <line x1="10" y1="16" x2="10" y2="20" stroke="#326ce5" stroke-width="1.5"/>
     <line x1="0" y1="10" x2="4" y2="10" stroke="#326ce5" stroke-width="1.5"/>
     <line x1="16" y1="10" x2="20" y2="10" stroke="#326ce5" stroke-width="1.5"/>
-    <line x1="2.93" y1="2.93" x2="5.76" y2="5.76" stroke="#326ce5" stroke-width="1.5"/>
-    <line x1="14.24" y1="14.24" x2="17.07" y2="17.07" stroke="#326ce5" stroke-width="1.5"/>
-    <line x1="2.93" y1="17.07" x2="5.76" y2="14.24" stroke="#326ce5" stroke-width="1.5"/>
-    <line x1="14.24" y1="5.76" x2="17.07" y2="2.93" stroke="#326ce5" stroke-width="1.5"/>
+    <line x1="3" y1="3" x2="6" y2="6" stroke="#326ce5" stroke-width="1.5"/>
+    <line x1="14" y1="14" x2="17" y2="17" stroke="#326ce5" stroke-width="1.5"/>
+    <line x1="3" y1="17" x2="6" y2="14" stroke="#326ce5" stroke-width="1.5"/>
+    <line x1="14" y1="6" x2="17" y2="3" stroke="#326ce5" stroke-width="1.5"/>
     <text x="28" y="15" font-size="13" font-weight="bold" fill="#326ce5">Kubernetes Cluster</text>
   </g>
 
-  <!-- ============================================================ -->
-  <!-- NGINX INGRESS CONTROLLER -->
-  <!-- ============================================================ -->
-  <g transform="translate(395, 175)" filter="url(#shadow)">
-    <rect x="0" y="0" width="310" height="55" rx="10" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
-    <rect x="0" y="0" width="310" height="30" rx="10" fill="url(#grayGradient)"/>
-    <rect x="0" y="18" width="310" height="12" fill="url(#grayGradient)"/>
-    <text x="155" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">NGINX Ingress Controller</text>
-    <!-- Route rules -->
-    <text x="35" y="46" text-anchor="start" font-size="9" fill="#64748b" font-family="monospace">/api/platform</text>
-    <text x="130" y="46" text-anchor="start" font-size="9" fill="#94a3b8">&#x2192;</text>
-    <text x="145" y="46" text-anchor="start" font-size="9" fill="#64748b" font-family="monospace">platforms-srv</text>
-    <text x="35" y="70" text-anchor="start" font-size="9" fill="#64748b" font-family="monospace">/api/cmd/platform</text>
-    <text x="145" y="70" text-anchor="start" font-size="9" fill="#94a3b8">&#x2192;</text>
-    <text x="160" y="70" text-anchor="start" font-size="9" fill="#64748b" font-family="monospace">commands-srv</text>
+  <!-- NGINX Ingress -->
+  <g transform="translate(395, 173)" filter="url(#shadow)">
+    <rect x="0" y="0" width="310" height="52" rx="10" fill="#f8fafc" stroke="#64748b" stroke-width="2"/>
+    <rect x="0" y="0" width="310" height="28" rx="10" fill="url(#grayGradient)"/>
+    <rect x="0" y="16" width="310" height="12" fill="url(#grayGradient)"/>
+    <text x="155" y="19" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">NGINX Ingress Controller</text>
+    <text x="40" y="43" text-anchor="start" font-size="9" fill="#64748b" font-family="monospace">/api/platform</text>
+    <text x="135" y="43" text-anchor="start" font-size="9" fill="#94a3b8">→ platforms-srv</text>
+    <text x="235" y="43" text-anchor="start" font-size="9" fill="#64748b" font-family="monospace">/api/cmd/*</text>
+    <text x="145" y="64" text-anchor="start" font-size="9" fill="#94a3b8">→ commands-srv</text>
   </g>
 
-  <!-- Arrow: Client to Ingress -->
-  <path d="M550,114 L550,173" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#arrowGray)" stroke-linecap="round"/>
-  <rect x="555" y="132" width="72" height="16" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="591" y="144" text-anchor="middle" font-size="9" fill="#64748b">HTTP :80</text>
+  <!-- Arrow: Client → Ingress -->
+  <path d="M550,112 L550,171" stroke="#64748b" stroke-width="2.5" fill="none" marker-end="url(#arrowGray)" stroke-linecap="round"/>
+  <rect x="555" y="128" width="72" height="16" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="591" y="140" text-anchor="middle" font-size="9" fill="#64748b">HTTP :80</text>
 
   <!-- ============================================================ -->
-  <!-- PlatformService (Blue, left side) -->
+  <!-- PlatformService (Blue) -->
   <!-- ============================================================ -->
-  <g transform="translate(60, 310)" filter="url(#shadow)">
-    <rect x="0" y="0" width="300" height="210" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
-    <!-- Header -->
-    <rect x="0" y="0" width="300" height="38" rx="12" fill="url(#blueGradient)"/>
-    <rect x="0" y="22" width="300" height="16" fill="url(#blueGradient)"/>
-    <text x="150" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">PlatformService</text>
-    <text x="150" y="53" text-anchor="middle" font-size="10" fill="#3b82f6">.NET 10 / ASP.NET Core</text>
+  <g transform="translate(55, 310)" filter="url(#shadow)">
+    <rect x="0" y="0" width="300" height="220" rx="12" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+    <rect x="0" y="0" width="300" height="36" rx="12" fill="url(#blueGradient)"/>
+    <rect x="0" y="20" width="300" height="16" fill="url(#blueGradient)"/>
+    <text x="150" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">PlatformService</text>
+    <text x="150" y="51" text-anchor="middle" font-size="10" fill="#3b82f6">.NET 10 ASP.NET Core</text>
 
-    <!-- REST API -->
-    <g transform="translate(15, 66)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">REST API</text>
-      <text x="64" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">GET/POST</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="monospace">/api/platform</text>
+    <!-- REST API card -->
+    <g transform="translate(12, 64)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">REST API</text>
+      <text x="67" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">GET/POST</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="monospace">/api/platform</text>
     </g>
 
-    <!-- gRPC Server -->
-    <g transform="translate(158, 66)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">gRPC Server</text>
-      <text x="64" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">:666</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="monospace">GetAllPlatforms</text>
+    <!-- gRPC Server card -->
+    <g transform="translate(154, 64)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">gRPC Server</text>
+      <text x="67" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">:666 (HTTP/2)</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">GetAllPlatforms</text>
     </g>
 
-    <!-- EF Core -->
-    <g transform="translate(15, 126)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">EF Core 10</text>
-      <text x="64" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">+ Npgsql</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8">Repository Pattern</text>
+    <!-- EF Core card -->
+    <g transform="translate(12, 126)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">EF Core 10</text>
+      <text x="67" y="30" text-anchor="middle" font-size="9" fill="#64748b">Npgsql / InMemory</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">Repository Pattern</text>
     </g>
 
-    <!-- Outbound -->
-    <g transform="translate(158, 126)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">Outbound</text>
-      <text x="64" y="30" text-anchor="middle" font-size="8" fill="#64748b">HTTP + RabbitMQ</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8">Publish</text>
+    <!-- Outbound card -->
+    <g transform="translate(154, 126)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bfdbfe" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#3b82f6">Outbound</text>
+      <text x="67" y="30" text-anchor="middle" font-size="8" fill="#64748b">HTTP POST + RabbitMQ</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">Publish Events</text>
     </g>
 
     <!-- Port badge -->
-    <rect x="110" y="186" width="80" height="18" rx="9" fill="#3b82f6" opacity="0.15"/>
-    <text x="150" y="199" text-anchor="middle" font-size="9" font-weight="bold" fill="#2563eb">port 80 / 666</text>
+    <rect x="100" y="192" width="100" height="20" rx="10" fill="#3b82f6" opacity="0.12"/>
+    <text x="150" y="206" text-anchor="middle" font-size="9" font-weight="bold" fill="#2563eb">:80 HTTP / :666 gRPC</text>
   </g>
 
   <!-- ============================================================ -->
-  <!-- CommandService (Green, right side) -->
+  <!-- CommandService (Green) -->
   <!-- ============================================================ -->
-  <g transform="translate(740, 310)" filter="url(#shadow)">
-    <rect x="0" y="0" width="300" height="210" rx="12" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
-    <!-- Header -->
-    <rect x="0" y="0" width="300" height="38" rx="12" fill="url(#greenGradient)"/>
-    <rect x="0" y="22" width="300" height="16" fill="url(#greenGradient)"/>
-    <text x="150" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">CommandService</text>
-    <text x="150" y="53" text-anchor="middle" font-size="10" fill="#22c55e">.NET 10 / ASP.NET Core</text>
+  <g transform="translate(745, 310)" filter="url(#shadow)">
+    <rect x="0" y="0" width="300" height="220" rx="12" fill="#f0fdf4" stroke="#22c55e" stroke-width="2"/>
+    <rect x="0" y="0" width="300" height="36" rx="12" fill="url(#greenGradient)"/>
+    <rect x="0" y="20" width="300" height="16" fill="url(#greenGradient)"/>
+    <text x="150" y="24" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">CommandService</text>
+    <text x="150" y="51" text-anchor="middle" font-size="10" fill="#22c55e">.NET 10 ASP.NET Core</text>
 
-    <!-- REST API -->
-    <g transform="translate(15, 66)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">REST API</text>
-      <text x="64" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">GET/POST</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="monospace">/api/cmd/...</text>
+    <!-- REST API card -->
+    <g transform="translate(12, 64)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">REST API</text>
+      <text x="67" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">GET/POST</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="monospace">/api/cmd/...</text>
     </g>
 
-    <!-- gRPC Client -->
-    <g transform="translate(158, 66)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">gRPC Client</text>
-      <text x="64" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">with retry</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8">Seed at startup</text>
+    <!-- gRPC Client card -->
+    <g transform="translate(154, 64)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">gRPC Client</text>
+      <text x="67" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">with retry (5x)</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">Startup Seed Sync</text>
     </g>
 
-    <!-- InMemory DB -->
-    <g transform="translate(15, 126)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">InMemory DB</text>
-      <text x="64" y="30" text-anchor="middle" font-size="9" fill="#64748b" font-family="monospace">EF Core</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8">Commands + Platforms</text>
+    <!-- InMemory DB card -->
+    <g transform="translate(12, 126)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">InMemory DB</text>
+      <text x="67" y="30" text-anchor="middle" font-size="9" fill="#64748b">EF Core 10</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">Commands + Platforms</text>
     </g>
 
-    <!-- Inbound -->
-    <g transform="translate(158, 126)">
-      <rect x="0" y="0" width="128" height="50" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
-      <text x="64" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">Inbound</text>
-      <text x="64" y="30" text-anchor="middle" font-size="8" fill="#64748b">RabbitMQ subscriber</text>
-      <text x="64" y="42" text-anchor="middle" font-size="8" fill="#94a3b8">with retry</text>
+    <!-- Inbound card -->
+    <g transform="translate(154, 126)">
+      <rect x="0" y="0" width="134" height="52" rx="6" fill="#ffffff" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="67" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#16a34a">Inbound</text>
+      <text x="67" y="30" text-anchor="middle" font-size="8" fill="#64748b">RabbitMQ Subscriber</text>
+      <text x="67" y="44" text-anchor="middle" font-size="8" fill="#94a3b8">BackgroundService</text>
     </g>
 
     <!-- Port badge -->
-    <rect x="120" y="186" width="60" height="18" rx="9" fill="#22c55e" opacity="0.15"/>
-    <text x="150" y="199" text-anchor="middle" font-size="9" font-weight="bold" fill="#16a34a">port 80</text>
+    <rect x="118" y="192" width="64" height="20" rx="10" fill="#22c55e" opacity="0.12"/>
+    <text x="150" y="206" text-anchor="middle" font-size="9" font-weight="bold" fill="#16a34a">:80 HTTP</text>
   </g>
 
   <!-- ============================================================ -->
   <!-- RabbitMQ (Orange, center) -->
   <!-- ============================================================ -->
-  <g transform="translate(440, 345)" filter="url(#shadow)">
+  <g transform="translate(440, 350)" filter="url(#shadow)">
     <rect x="0" y="0" width="220" height="90" rx="12" fill="#fff7ed" stroke="#f97316" stroke-width="2"/>
-    <!-- Header -->
-    <rect x="0" y="0" width="220" height="34" rx="12" fill="url(#orangeGradient)"/>
-    <rect x="0" y="20" width="220" height="14" fill="url(#orangeGradient)"/>
-    <text x="110" y="23" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">RabbitMQ 3</text>
-    <!-- Details -->
-    <text x="110" y="54" text-anchor="middle" font-size="10" fill="#ea580c">Fanout Exchange: "trigger"</text>
-    <text x="110" y="70" text-anchor="middle" font-size="9" fill="#94a3b8">AMQP :5672 / Management :15672</text>
-    <!-- Badge -->
-    <rect x="70" y="74" width="80" height="14" rx="7" fill="#f97316" opacity="0.12"/>
-    <text x="110" y="85" text-anchor="middle" font-size="8" font-weight="bold" fill="#ea580c">Async Message Bus</text>
+    <rect x="0" y="0" width="220" height="32" rx="12" fill="url(#orangeGradient)"/>
+    <rect x="0" y="18" width="220" height="14" fill="url(#orangeGradient)"/>
+    <text x="110" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">RabbitMQ 3</text>
+    <text x="110" y="50" text-anchor="middle" font-size="10" fill="#ea580c">Fanout Exchange: "trigger"</text>
+    <text x="110" y="66" text-anchor="middle" font-size="9" fill="#94a3b8">AMQP :5672 / Mgmt :15672</text>
+    <rect x="70" y="72" width="80" height="14" rx="7" fill="#f97316" opacity="0.12"/>
+    <text x="110" y="83" text-anchor="middle" font-size="8" font-weight="bold" fill="#ea580c">Async Event Bus</text>
   </g>
 
   <!-- ============================================================ -->
   <!-- PostgreSQL (Purple, bottom-left) -->
   <!-- ============================================================ -->
-  <g transform="translate(60, 555)" filter="url(#shadow)">
-    <rect x="0" y="0" width="220" height="80" rx="12" fill="#faf5ff" stroke="#a855f7" stroke-width="2"/>
-    <!-- Header -->
-    <rect x="0" y="0" width="220" height="34" rx="12" fill="url(#purpleGradient)"/>
-    <rect x="0" y="20" width="220" height="14" fill="url(#purpleGradient)"/>
-    <text x="110" y="23" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">PostgreSQL 16</text>
-    <!-- Details -->
-    <text x="110" y="54" text-anchor="middle" font-size="10" fill="#7c3aed">DB: platformsdb</text>
-    <text x="110" y="70" text-anchor="middle" font-size="9" fill="#94a3b8">Persistent Volume / :5432</text>
+  <g transform="translate(75, 565)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="80" rx="12" fill="#faf5ff" stroke="#a855f7" stroke-width="2"/>
+    <rect x="0" y="0" width="230" height="32" rx="12" fill="url(#purpleGradient)"/>
+    <rect x="0" y="18" width="230" height="14" fill="url(#purpleGradient)"/>
+    <text x="115" y="22" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">PostgreSQL 16</text>
+    <text x="115" y="50" text-anchor="middle" font-size="10" fill="#7c3aed">DB: platformsdb (prod only)</text>
+    <text x="115" y="66" text-anchor="middle" font-size="9" fill="#94a3b8">PersistentVolume / :5432</text>
   </g>
 
   <!-- ============================================================ -->
   <!-- CONNECTION ARROWS -->
   <!-- ============================================================ -->
 
-  <!-- Ingress to PlatformService (left route) -->
-  <path d="M460,240 Q370,270 260,310" stroke="#94a3b8" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.3"/>
-  <path d="M460,240 Q370,270 260,310" class="flow-line-blue" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#arrowBlue)" stroke-linecap="round"/>
-  <rect x="310" y="253" width="100" height="16" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="360" y="265" text-anchor="middle" font-size="9" fill="#3b82f6">/api/platform</text>
+  <!-- Ingress → PlatformService -->
+  <path d="M470,235 Q380,270 260,310" stroke="#94a3b8" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.3"/>
+  <path d="M470,235 Q380,270 260,310" class="flow-line-blue" stroke="#3b82f6" stroke-width="2.5" fill="none" marker-end="url(#arrowBlue)" stroke-linecap="round"/>
+  <rect x="320" y="248" width="100" height="16" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="370" y="260" text-anchor="middle" font-size="9" fill="#3b82f6">/api/platform</text>
 
-  <!-- Ingress to CommandService (right route) -->
-  <path d="M640,240 Q730,270 840,310" stroke="#94a3b8" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.3"/>
-  <path d="M640,240 Q730,270 840,310" class="flow-line-green" stroke="#22c55e" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)" stroke-linecap="round"/>
-  <rect x="685" y="253" width="110" height="16" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="740" y="265" text-anchor="middle" font-size="9" fill="#22c55e">/api/cmd/platform</text>
+  <!-- Ingress → CommandService -->
+  <path d="M630,235 Q720,270 840,310" stroke="#94a3b8" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.3"/>
+  <path d="M630,235 Q720,270 840,310" class="flow-line-green" stroke="#22c55e" stroke-width="2.5" fill="none" marker-end="url(#arrowGreen)" stroke-linecap="round"/>
+  <rect x="685" y="248" width="110" height="16" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="740" y="260" text-anchor="middle" font-size="9" fill="#22c55e">/api/cmd/*</text>
 
-  <!-- PlatformService to PostgreSQL -->
-  <path d="M170,520 L170,553" stroke="#c4b5fd" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
-  <path d="M170,520 L170,553" class="flow-line-purple" stroke="#a855f7" stroke-width="2.5" fill="none" marker-end="url(#arrowPurple)" stroke-linecap="round"/>
-  <rect x="178" y="528" width="72" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="214" y="539" text-anchor="middle" font-size="8" fill="#7c3aed">EF Core :5432</text>
+  <!-- PlatformService → PostgreSQL -->
+  <path d="M190,530 L190,563" stroke="#c4b5fd" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M190,530 L190,563" class="flow-line-purple" stroke="#a855f7" stroke-width="2.5" fill="none" marker-end="url(#arrowPurple)" stroke-linecap="round"/>
+  <rect x="198" y="538" width="72" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="234" y="549" text-anchor="middle" font-size="8" fill="#7c3aed">Npgsql :5432</text>
 
-  <!-- PlatformService to RabbitMQ (publish) -->
-  <path d="M360,400 L438,400" stroke="#fed7aa" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
-  <path d="M360,400 L438,400" class="flow-line-orange" stroke="#f97316" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)" stroke-linecap="round"/>
-  <rect x="367" y="385" width="56" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="395" y="395" text-anchor="middle" font-size="8" font-weight="bold" fill="#ea580c">Publish</text>
+  <!-- PlatformService → RabbitMQ (publish) -->
+  <path d="M355,400 L438,400" stroke="#fed7aa" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M355,400 L438,400" class="flow-line-orange" stroke="#f97316" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)" stroke-linecap="round"/>
+  <rect x="362" y="385" width="56" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="390" y="395" text-anchor="middle" font-size="8" font-weight="bold" fill="#ea580c">Publish</text>
 
-  <!-- RabbitMQ to CommandService (subscribe) -->
-  <path d="M660,400 L738,400" stroke="#fed7aa" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
-  <path d="M660,400 L738,400" class="flow-line-orange" stroke="#f97316" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)" stroke-linecap="round"/>
+  <!-- RabbitMQ → CommandService (subscribe) -->
+  <path d="M660,400 L743,400" stroke="#fed7aa" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M660,400 L743,400" class="flow-line-orange" stroke="#f97316" stroke-width="2.5" fill="none" marker-end="url(#arrowOrange)" stroke-linecap="round"/>
   <rect x="664" y="385" width="66" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
   <text x="697" y="395" text-anchor="middle" font-size="8" font-weight="bold" fill="#ea580c">Subscribe</text>
 
-  <!-- PlatformService HTTP POST to CommandService (sync, curved top) -->
-  <path d="M360,340 Q550,260 738,340" stroke="#bfdbfe" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.4"/>
-  <path d="M360,340 Q550,260 738,340" class="flow-line-sky" stroke="#0ea5e9" stroke-width="2.5" fill="none" marker-end="url(#arrowSky)" stroke-linecap="round"/>
-  <rect x="495" y="267" width="90" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="540" y="277" text-anchor="middle" font-size="8" font-weight="bold" fill="#0284c7">HTTP POST (sync)</text>
+  <!-- PlatformService HTTP POST → CommandService (sync, curved top) -->
+  <path d="M355,340 Q550,255 743,340" stroke="#bfdbfe" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.4"/>
+  <path d="M355,340 Q550,255 743,340" class="flow-line-sky" stroke="#0ea5e9" stroke-width="2.5" fill="none" marker-end="url(#arrowSky)" stroke-linecap="round"/>
+  <rect x="495" y="265" width="90" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="540" y="275" text-anchor="middle" font-size="8" font-weight="bold" fill="#0284c7">HTTP POST (sync)</text>
 
-  <!-- CommandService gRPC to PlatformService (startup, curved bottom) -->
-  <path d="M738,470 Q550,540 360,470" stroke="#fecaca" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.4"/>
-  <path d="M738,470 Q550,540 360,470" class="flow-line-red" stroke="#ef4444" stroke-width="2.5" fill="none" marker-end="url(#arrowRed)" stroke-linecap="round"/>
-  <rect x="485" y="510" width="110" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
-  <text x="540" y="520" text-anchor="middle" font-size="8" font-weight="bold" fill="#dc2626">gRPC :666 (startup seed)</text>
+  <!-- CommandService gRPC → PlatformService (startup, curved bottom) -->
+  <path d="M743,480 Q550,555 355,480" stroke="#fecaca" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.4"/>
+  <path d="M743,480 Q550,555 355,480" class="flow-line-red" stroke="#ef4444" stroke-width="2.5" fill="none" marker-end="url(#arrowRed)" stroke-linecap="round"/>
+  <rect x="485" y="530" width="110" height="14" rx="3" fill="#ffffff" opacity="0.9"/>
+  <text x="540" y="540" text-anchor="middle" font-size="8" font-weight="bold" fill="#dc2626">gRPC :666 (startup)</text>
+
+  <!-- ============================================================ -->
+  <!-- DATA FLOW / 数据流 -->
+  <!-- ============================================================ -->
+  <g transform="translate(50, 670)">
+    <text x="0" y="0" font-size="10" font-weight="bold" fill="#64748b">Data Flow / 数据流:</text>
+    <text x="0" y="17" font-size="9" fill="#475569">1. POST /api/platform → PlatformService → PostgreSQL → HTTP POST sync → CommandService → RabbitMQ async publish → CommandService subscriber</text>
+    <text x="0" y="33" font-size="9" fill="#475569">2. CommandService startup → gRPC GetAllPlatforms → PlatformService:666 → seed local InMemory DB (with retry 5x)</text>
+    <text x="0" y="49" font-size="9" fill="#475569">3. External: acme.com → NGINX Ingress → ClusterIP (platforms-srv / commands-srv) → Services</text>
+  </g>
 
   <!-- ============================================================ -->
   <!-- LEGEND -->
   <!-- ============================================================ -->
-  <g transform="translate(530, 570)">
-    <rect x="0" y="0" width="530" height="100" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
-    <text x="265" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#64748b">LEGEND</text>
+  <g transform="translate(395, 580)">
+    <rect x="0" y="0" width="310" height="92" rx="10" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.5"/>
+    <text x="155" y="16" text-anchor="middle" font-size="11" font-weight="bold" fill="#64748b">Legend / 图例</text>
 
-    <!-- Row 1: Services -->
-    <rect x="20" y="32" width="14" height="14" rx="3" fill="#3b82f6"/>
-    <text x="40" y="44" font-size="10" fill="#1e293b">PlatformService</text>
+    <rect x="15" y="26" width="12" height="12" rx="2" fill="#3b82f6"/>
+    <text x="32" y="36" font-size="9" fill="#1e293b">PlatformService</text>
 
-    <rect x="145" y="32" width="14" height="14" rx="3" fill="#22c55e"/>
-    <text x="165" y="44" font-size="10" fill="#1e293b">CommandService</text>
+    <rect x="130" y="26" width="12" height="12" rx="2" fill="#22c55e"/>
+    <text x="147" y="36" font-size="9" fill="#1e293b">CommandService</text>
 
-    <rect x="280" y="32" width="14" height="14" rx="3" fill="#f97316"/>
-    <text x="300" y="44" font-size="10" fill="#1e293b">RabbitMQ (Async)</text>
+    <rect x="245" y="26" width="12" height="12" rx="2" fill="#f97316"/>
+    <text x="262" y="36" font-size="9" fill="#1e293b">RabbitMQ</text>
 
-    <rect x="415" y="32" width="14" height="14" rx="3" fill="#a855f7"/>
-    <text x="435" y="44" font-size="10" fill="#1e293b">PostgreSQL</text>
+    <line x1="15" y1="54" x2="45" y2="54" stroke="#0ea5e9" stroke-width="2" stroke-dasharray="8,4"/>
+    <text x="52" y="58" font-size="9" fill="#1e293b">HTTP Sync</text>
 
-    <!-- Row 2: Communication -->
-    <line x1="20" y1="62" x2="50" y2="62" stroke="#0ea5e9" stroke-width="2.5" stroke-dasharray="8,4"/>
-    <text x="58" y="66" font-size="10" fill="#1e293b">HTTP Sync</text>
+    <line x1="130" y1="54" x2="160" y2="54" stroke="#f97316" stroke-width="2" stroke-dasharray="8,4"/>
+    <text x="167" y="58" font-size="9" fill="#1e293b">RabbitMQ Async</text>
 
-    <line x1="140" y1="62" x2="170" y2="62" stroke="#f97316" stroke-width="2.5" stroke-dasharray="8,4"/>
-    <text x="178" y="66" font-size="10" fill="#1e293b">RabbitMQ Async</text>
+    <line x1="245" y1="54" x2="275" y2="54" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+    <text x="22" y="74" font-size="9" fill="#1e293b">gRPC (Startup Seed)</text>
 
-    <line x1="300" y1="62" x2="330" y2="62" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="8,4"/>
-    <text x="338" y="66" font-size="10" fill="#1e293b">gRPC Sync (Startup)</text>
-
-    <!-- Row 3: Protocol -->
-    <rect x="20" y="78" width="50" height="12" rx="6" fill="#64748b" opacity="0.1" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3"/>
-    <text x="78" y="88" font-size="10" fill="#1e293b">K8s Cluster Boundary</text>
+    <rect x="130" y="68" width="12" height="12" rx="2" fill="#a855f7"/>
+    <text x="147" y="78" font-size="9" fill="#1e293b">PostgreSQL</text>
   </g>
-
-  <!-- ============================================================ -->
-  <!-- DATA FLOW DESCRIPTION (bottom-left) -->
-  <!-- ============================================================ -->
-  <g transform="translate(60, 660)">
-    <text x="0" y="0" font-size="10" font-weight="bold" fill="#64748b">DATA FLOW:</text>
-    <text x="0" y="16" font-size="9" fill="#475569">1. POST /api/platform &#x2192; PlatformService &#x2192; PostgreSQL &#x2192; HTTP POST to CommandService &#x2192; RabbitMQ publish &#x2192; CommandService subscriber</text>
-    <text x="0" y="32" font-size="9" fill="#475569">2. CommandService startup &#x2192; gRPC call to PlatformService:666 &#x2192; seed all platforms locally</text>
-    <text x="0" y="48" font-size="9" fill="#475569">3. External: acme.com &#x2192; NGINX Ingress &#x2192; ClusterIP Services (platforms-srv / commands-srv)</text>
-  </g>
-
 </svg>

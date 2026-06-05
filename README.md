@@ -101,6 +101,8 @@ dotnet ef database update
 
 Migrations apply automatically in Production environment via `PrepDb`.
 
+> **Note**: `DesignTimeDbContextFactory` uses `POSTGRES_PASSWORD` env var (falls back to dev default). In K8S Production, this password is injected via the `postgres` secret — the PlatformService Startup substitutes the `PA55W0RD_PLACEHOLDER` token in the connection string at runtime.
+
 ## API Endpoints
 
 ### PlatformService
