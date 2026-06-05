@@ -10,19 +10,11 @@ using RabbitMQ.Client.Events;
 
 namespace CommandService.AsyncDataServices
 {
-    public class MessageBusSubscriber : BackgroundService
+    public class MessageBusSubscriber(IConfiguration configuration, IEventProcessor processor) : BackgroundService
     {
-        private readonly IConfiguration _configuration;
-        private readonly IEventProcessor _processor;
         private IConnection? _connection;
         private IChannel? _channel;
         private string _queueName = string.Empty;
-
-        public MessageBusSubscriber(IConfiguration configuration, IEventProcessor processor)
-        {
-            _configuration = configuration;
-            _processor = processor;
-        }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -30,14 +22,14 @@ namespace CommandService.AsyncDataServices
 
             var factory = new ConnectionFactory
             {
-                HostName = _configuration["RabbitMQHost"] ?? "localhost",
-                Port = int.TryParse(_configuration["RabbitMQPort"], out var port) ? port : 5672
+                HostName = configuration["RabbitMQHost"] ?? "localhost",
+                Port = int.TryParse(configuration["RabbitMQPort"], out var port) ? port : 5672
             };
 
             const int maxRetries = 5;
             const int delayMs = 5000;
 
-            for (int attempt = 1; attempt <= maxRetries; attempt++)
+            for (var attempt = 1; attempt <= maxRetries; attempt++)
             {
                 try
                 {
@@ -70,7 +62,7 @@ namespace CommandService.AsyncDataServices
                         var body = ea.Body.ToArray();
                         var notificationMsg = Encoding.UTF8.GetString(body);
 
-                        _processor.ProcessEvent(notificationMsg);
+                        processor.ProcessEvent(notificationMsg);
                     };
 
                     await _channel.BasicConsumeAsync(queue: _queueName, autoAck: true, consumer: consumer,

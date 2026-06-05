@@ -2,8 +2,8 @@
 {
     public class PlatformPublishDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Event { get; set; }
+        public int Id { get; init; }
+        public string Name { get; init; }
+        public string Event { get; init; }
     }
 }

@@ -8,17 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CommandService.EventProcessing
 {
-    public class EventProcessor:IEventProcessor
+    public class EventProcessor(IServiceScopeFactory factory, IMapper mapper) : IEventProcessor
     {
-        private readonly IServiceScopeFactory _factory;
-        private readonly IMapper _mapper;
-
-        public EventProcessor(IServiceScopeFactory factory,IMapper mapper)
-        {
-            _factory = factory;
-            _mapper = mapper;
-        }
-
         public void ProcessEvent(string msg)
         {
             var eventType = DetermineEvent(msg);
@@ -28,6 +19,7 @@ namespace CommandService.EventProcessing
                 case EventType.PlatformPublished:
                     AddPlatform(msg);
                     break;
+                case EventType.Undetermined:
                 default:
                     break;
             }
@@ -52,31 +44,29 @@ namespace CommandService.EventProcessing
 
         private void AddPlatform(string platformPublishedMsg)
         {
-            using (var scope = _factory.CreateScope())
+            using var scope = factory.CreateScope();
+            var repo = scope.ServiceProvider.GetRequiredService<ICommandRepo>();
+
+            var platformPublishedDto = JsonSerializer.Deserialize<PlatformPublishedDto>(platformPublishedMsg);
+
+            try
             {
-                var repo = scope.ServiceProvider.GetRequiredService<ICommandRepo>();
+                var plat = mapper.Map<Platform>(platformPublishedDto);
 
-                var platformPublishedDto = JsonSerializer.Deserialize<PlatformPublishedDto>(platformPublishedMsg);
-
-                try
+                if (!repo.ExternalPlatformExists(plat.ExternalId))
                 {
-                    var plat = _mapper.Map<Platform>(platformPublishedDto);
-
-                    if (!repo.ExternalPlatformExists(plat.ExternalId))
-                    {
-                        repo.CreatePlatform(plat);
-                        repo.SaveChanges();
-                        Console.WriteLine($"--> Platform: {plat} added");
-                    }
-                    else
-                    {
-                        Console.WriteLine("--> Platform already exists...");
-                    }
+                    repo.CreatePlatform(plat);
+                    repo.SaveChanges();
+                    Console.WriteLine($"--> Platform: {plat} added");
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine($"--> Could not add platform to DB {ex.Message}");
+                    Console.WriteLine("--> Platform already exists...");
                 }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"--> Could not add platform to DB {ex.Message}");
             }
         }
     }

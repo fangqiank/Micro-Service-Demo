@@ -5,38 +5,28 @@ using PlatformService.Models;
 
 namespace PlatformService.Data
 {
-    public class PlatformRepo: IPlatformRepo
+    public class PlatformRepo(AppDbContext ctx) : IPlatformRepo
     {
-        private readonly AppDbContext _ctx;
-
-        public PlatformRepo(AppDbContext ctx)
-        {
-            _ctx = ctx;
-        }
-
         public bool SaveChanges()
         {
-            return _ctx.SaveChanges() >= 0;
+            return ctx.SaveChanges() >= 0;
         }
 
         public IEnumerable<Platform> GetAllPlatforms()
         {
-            return _ctx.Platforms.ToList();
+            return ctx.Platforms.ToList();
         }
 
         public Platform GetPlatformById(int id)
         {
-            return _ctx.Platforms.FirstOrDefault(x => x.Id == id);
+            return ctx.Platforms.FirstOrDefault(x => x.Id == id);
         }
 
         public void CreatePlatform(Platform platform)
         {
-            if (platform is null)
-            {
-                throw new ArgumentNullException(nameof(platform));
-            }
+            ArgumentNullException.ThrowIfNull(platform);
 
-            _ctx.Platforms.Add(platform);
+            ctx.Platforms.Add(platform);
         }
     }
 }

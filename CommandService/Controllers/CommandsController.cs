@@ -10,28 +10,19 @@ namespace CommandService.Controllers
 {
     [ApiController]
     [Route("api/cmd/platforms/{platformId}/[controller]")]
-    public class CommandsController : ControllerBase
+    public class CommandsController(ICommandRepo repo, IMapper mapper) : ControllerBase
     {
-        private readonly ICommandRepo _repo;
-        private readonly IMapper _mapper;
-
-        public CommandsController(ICommandRepo repo, IMapper mapper)
-        {
-            _repo = repo;
-            _mapper = mapper;
-        }
-
         [HttpGet]
         public ActionResult<IEnumerable<CommandReadDto>> GetCommandsForPlatform(int platformId)
         {
             Console.WriteLine($"--> GetCommandsForPlatform: {platformId}");
 
-            if (!_repo.PlatformExists(platformId))
+            if (!repo.PlatformExists(platformId))
                 return NotFound();
 
-            var commands = _repo.GetCommandsForPlatform(platformId);
+            var commands = repo.GetCommandsForPlatform(platformId);
 
-            return Ok(_mapper.Map<IEnumerable<CommandReadDto>>(commands));
+            return Ok(mapper.Map<IEnumerable<CommandReadDto>>(commands));
         }
 
         [HttpGet("{commandId}", Name = "GetCommandForPlatform")]
@@ -39,15 +30,15 @@ namespace CommandService.Controllers
         {
             Console.WriteLine($"--> GetCommandForPlatform: {platformId} / {commandId}");
 
-            if (!_repo.PlatformExists(platformId))
+            if (!repo.PlatformExists(platformId))
                 return NotFound();
 
-            var command = _repo.GetCommand(platformId, commandId);
+            var command = repo.GetCommand(platformId, commandId);
 
             if (command is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<CommandReadDto>(command));
+            return Ok(mapper.Map<CommandReadDto>(command));
         }
 
         [HttpPost]
@@ -55,15 +46,15 @@ namespace CommandService.Controllers
         {
             Console.WriteLine($"--> CreateCommandForPlatform: {platformId} ");
 
-            if (!_repo.PlatformExists(platformId))
+            if (!repo.PlatformExists(platformId))
                 return NotFound();
 
-            var commandModel = _mapper.Map<Command>(command);
+            var commandModel = mapper.Map<Command>(command);
 
-            _repo.CreateCommand(platformId, commandModel);
-            _repo.SaveChanges();
+            repo.CreateCommand(platformId, commandModel);
+            repo.SaveChanges();
 
-            var commandReadDto = _mapper.Map<CommandReadDto>(commandModel);
+            var commandReadDto = mapper.Map<CommandReadDto>(commandModel);
 
             return CreatedAtRoute(nameof(GetCommandForPlatform),
                 new { platformId = platformId, commandId = commandReadDto.Id },

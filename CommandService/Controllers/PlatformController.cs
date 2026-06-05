@@ -9,25 +9,16 @@ namespace CommandService.Controllers
 {
     [ApiController]
     [Route("api/cmd/[controller]")]
-    public class PlatformController : ControllerBase
+    public class PlatformController(ICommandRepo repo, IMapper mapper) : ControllerBase
     {
-        private readonly ICommandRepo _repo;
-        private readonly IMapper _mapper;
-
-        public PlatformController(ICommandRepo repo, IMapper mapper)
-        {
-            _repo = repo;
-            _mapper = mapper;
-        }
-
         [HttpGet]
         public ActionResult<IEnumerable<PlatformReadDto>> GetPlatforms()
         {
             Console.WriteLine("--> Getting platforms from CommandService");
 
-            var items = _repo.GetAllPlatforms();
+            var items = repo.GetAllPlatforms();
 
-            return Ok(_mapper.Map<IEnumerable<PlatformReadDto>>(items));
+            return Ok(mapper.Map<IEnumerable<PlatformReadDto>>(items));
         }
 
         [HttpPost]

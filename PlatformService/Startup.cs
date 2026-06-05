@@ -15,25 +15,16 @@ using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService
 {
-    public class Startup
+    public class Startup(IConfiguration configuration, IWebHostEnvironment env)
     {
-        private readonly IWebHostEnvironment _env;
-        public IConfiguration Configuration { get; }
-
-        public Startup(IConfiguration configuration, IWebHostEnvironment env)
-        {
-            _env = env;
-            Configuration = configuration;
-        }
-
         public void ConfigureServices(IServiceCollection services)
         {
-            if (_env.IsProduction())
+            if (env.IsProduction())
             {
                 Console.WriteLine("--> Using PostgreSQL Db");
                 services.AddDbContext<AppDbContext>(opt =>
                 {
-                    var connStr = Configuration.GetConnectionString("PlatformsConn");
+                    var connStr = configuration.GetConnectionString("PlatformsConn");
                     // In K8S, password is injected via environment variable; substitute placeholder
                     var dbPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
                     if (!string.IsNullOrEmpty(dbPassword))
@@ -69,7 +60,7 @@ namespace PlatformService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlatformService", Version = "v1" });
             });
 
-            Console.WriteLine($"--> Command Service Endpoint {Configuration["CommandService"]}");
+            Console.WriteLine($"--> Command Service Endpoint {configuration["CommandService"]}");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -92,7 +83,7 @@ namespace PlatformService
 
                 endpoints.MapGet("/protos/platforms.proto", async ctx =>
                 {
-                    await ctx.Response.WriteAsync(File.ReadAllText("Protos/platforms.proto"));
+                    await ctx.Response.WriteAsync(await File.ReadAllTextAsync("Protos/platforms.proto"));
                 });
             });
 

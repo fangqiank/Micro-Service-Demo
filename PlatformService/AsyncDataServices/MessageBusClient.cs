@@ -8,16 +8,10 @@ using RabbitMQ.Client;
 
 namespace PlatformService.AsyncDataServices
 {
-    public class MessageBusClient : IMessageBusClient
+    public class MessageBusClient(IConfiguration configuration) : IMessageBusClient
     {
-        private readonly IConfiguration _configuration;
         private IConnection? _connection;
         private IChannel? _channel;
-
-        public MessageBusClient(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
 
         private async Task EnsureConnectedAsync()
         {
@@ -37,8 +31,8 @@ namespace PlatformService.AsyncDataServices
 
             var factory = new ConnectionFactory
             {
-                HostName = _configuration["RabbitMQHost"] ?? "localhost",
-                Port = int.TryParse(_configuration["RabbitMQPort"], out var port) ? port : 5672
+                HostName = configuration["RabbitMQHost"] ?? "localhost",
+                Port = int.TryParse(configuration["RabbitMQPort"], out var port) ? port : 5672
             };
 
             try

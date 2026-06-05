@@ -11,20 +11,18 @@ namespace CommandService.Data
     {
         public static void PrepPopulation(IApplicationBuilder builder)
         {
-            using (var scope = builder.ApplicationServices.CreateScope())
+            using var scope = builder.ApplicationServices.CreateScope();
+            var grpcClient = scope.ServiceProvider.GetRequiredService<IPlatformDataClient>();
+
+            var platforms = grpcClient.ReturnAllPlatforms();
+
+            if (platforms != null)
             {
-                var grpcClient = scope.ServiceProvider.GetService<IPlatformDataClient>();
-
-                var platforms = grpcClient.ReturnAllPlatforms();
-
-                if (platforms != null)
-                {
-                    SeedData(scope.ServiceProvider.GetService<ICommandRepo>(), platforms);
-                }
-                else
-                {
-                    Console.WriteLine("--> Could not retrieve platforms from gRPC server");
-                }
+                SeedData(scope.ServiceProvider.GetRequiredService<ICommandRepo>(), platforms);
+            }
+            else
+            {
+                Console.WriteLine("--> Could not retrieve platforms from gRPC server");
             }
         }
 

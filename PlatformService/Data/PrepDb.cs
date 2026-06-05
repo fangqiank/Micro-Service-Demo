@@ -11,10 +11,8 @@ namespace PlatformService.Data
     {
         public static void PrepPopulation(IApplicationBuilder app, bool isProd)
         {
-            using (var serviceScope = app.ApplicationServices.CreateScope())
-            {
-                SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProd);
-            }
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            SeedData(serviceScope.ServiceProvider.GetService<AppDbContext>(), isProd);
         }
 
         private static void SeedData(AppDbContext ctx, bool isProd)

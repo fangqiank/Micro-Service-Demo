@@ -2,9 +2,9 @@
 {
     public class PlatformReadDto
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public string Name { get; set; }
+        public string Name { get; init; }
 
     }
 }
