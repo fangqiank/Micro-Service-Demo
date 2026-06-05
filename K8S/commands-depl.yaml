@@ -15,6 +15,7 @@ spec:
       containers:
         - name: commandservice
           image: huamu/commandservice:latest
+          imagePullPolicy: Never
 ---
 apiVersion: v1
 kind: Service

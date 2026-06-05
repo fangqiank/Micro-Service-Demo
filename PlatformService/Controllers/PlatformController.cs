@@ -82,7 +82,7 @@ namespace PlatformService.Controllers
                 var platformPublishedDto = _mapper.Map<PlatformPublishDto>(platformReadDto);
                 platformPublishedDto.Event = "Platform_Published";
 
-                _messageBus.PublishNewPlatform(platformPublishedDto);
+                await _messageBus.PublishNewPlatformAsync(platformPublishedDto);
             }
             catch (Exception ex)
             {

@@ -1,128 +1,157 @@
-# Micro-Service-Demo
+# MicroServiceDemo / 微服务演示
+
+A .NET 10 microservices demo with Kubernetes deployment, demonstrating synchronous (HTTP, gRPC) and asynchronous (RabbitMQ) inter-service communication.
+
+![Architecture](MicroServiceDemo-architecture.svg)
+
+## Tech Stack / 技术栈
+
+| Category | Technology |
+|----------|-----------|
+| Runtime | .NET 10, ASP.NET Core |
+| Database | PostgreSQL 16 (PlatformService), InMemory (CommandService) |
+| ORM | EF Core 10 + Npgsql |
+| gRPC | Grpc.AspNetCore 2.80 |
+| Message Bus | RabbitMQ 3 (fanout exchange) |
+| Mapping | AutoMapper 16 |
+| API Docs | Swashbuckle.AspNetCore 10 |
+| Container | Docker, Kubernetes (Docker Desktop) |
+| Ingress | NGINX Ingress Controller |
+
+## Modules / 模块
+
+| Service | Project | Responsibility |
+|---------|---------|---------------|
+| PlatformService | `PlatformService/` | CRUD for platforms, publishes changes to CommandService via HTTP + RabbitMQ, exposes gRPC server |
+| CommandService | `CommandService/` | CRUD for commands per platform, receives platforms via RabbitMQ + gRPC client |
+
+## Data Flow / 数据流
+
+1. **Create Platform**: `POST /api/platform` → PlatformService saves to PostgreSQL → HTTP POST sync to CommandService → RabbitMQ async publish → CommandService creates local Platform
+2. **Startup Sync**: CommandService starts → gRPC call to PlatformService:666 → seeds all existing platforms (with retry)
+3. **External Access**: NGINX Ingress routes `acme.com/api/platform` → PlatformService, `acme.com/api/cmd/platform` → CommandService
+
 ```
-kubectl version
-Client Version: version.Info{Major:"1", Minor:"21", GitVersion:"v1.21.2", GitCommit:"092fbfbf53427de67cac1e9fa54aaa09a28371d7", GitTreeState:"clean", BuildDate:"2021-06-16T12:59:11Z", GoVersion:"go1.16.5", Compiler:"gc", Platform:"windows/amd64"}
-
-kubectl apply -f platforms-depl.yaml
-deployment.apps/platforms-depl created
-
-kubectl get deployments
-NAME             READY   UP-TO-DATE   AVAILABLE   AGE
-platforms-depl   1/1     1            1           41s
-
-kubectl get pods
-NAME                              READY   STATUS    RESTARTS   AGE
-platforms-depl-687d4d5548-2prhk   1/1     Running   0          4m48s
-
-kubectl delete deployment platforms-depl
-deployment.apps "platforms-depl" deleted
-
-kubectl apply -f platforms-np-srv.yaml
-service/platformservice-srv created
-
-kubectl get services
-NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
-kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP        23h
-platformservice-srv   NodePort    10.111.229.151   <none>        80:32517/TCP   85s  //32571 is port for k8s
-
-kubectl rollout restart deployment platforms-depl
-deployment.apps/platforms-depl restarted
-
-kubectl apply -f commands-depl.yaml
-deployment.apps/commands-depl created
-service/commands-clusterip-srv created
-
-kubectl get services
-NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
-commands-clusterip-srv    ClusterIP   10.108.210.199   <none>        80/TCP         76s
-kubernetes                ClusterIP   10.96.0.1        <none>        443/TCP        47h
-platforms-clusterip-srv   ClusterIP   10.104.55.64     <none>        80/TCP         17m
-platformservice-srv       NodePort    10.111.229.151   <none>        80:32517/TCP   24h
-
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
-
-kubectl get namespace
-NAME              STATUS   AGE
-default           Active   2d
-ingress-nginx     Active   2m9s
-kube-node-lease   Active   2d
-kube-public       Active   2d
-kube-system       Active   2d
-
-kubectl get pods --namespace=ingress-nginx
-NAME                                       READY   STATUS      RESTARTS   AGE
-ingress-nginx-admission-create-nft2f       0/1     Completed   0          4m20s
-ingress-nginx-admission-patch-6t6l4        0/1     Completed   1          4m20s
-ingress-nginx-controller-fd7bb8d66-jxfrc   1/1     Running     0          4m22s
-
-kubectl apply -f ingress-srv.yaml
-ingress.networking.k8s.io/ingress-srv created
-
-kubectl get storageclass
-NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-hostpath (default)   docker.io/hostpath   Delete          Immediate           false                  2d22h
-
-kubectl apply -f local-pvc.yaml
-persistentvolumeclaim/mssql-claim created
-
-kubectl get pvc
-NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-mssql-claim   Bound    pvc-9eee3ac9-b657-4068-9606-bcc33a7eee4e   200Mi      RWX            hostpath       74s
-
-kubectl get storageclass
-NAME                 PROVISIONER          RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
-hostpath (default)   docker.io/hostpath   Delete          Immediate           false                  2d22h
-
-kubectl create secret generic mssql --from-literal=SA_PASSWORD="xxxxx"
-secret/mssql created
-
-kubectl apply -f mssql-plat-depl.yaml
-deployment.apps/mssql-depl created
-service/mssql-clusterip-srv created
-service/mssql-loadbalance created
-
-kubectl get services
- NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
-commands-clusterip-srv    ClusterIP      10.108.210.199   <none>        80/TCP           23h
-kubernetes                ClusterIP      10.96.0.1        <none>        443/TCP          2d23h
-mssql-clusterip-srv       ClusterIP      10.111.155.104   <none>        1433/TCP         112s
-mssql-loadbalance         LoadBalancer   10.96.227.145    localhost     1433:32537/TCP   111s
-platforms-clusterip-srv   ClusterIP      10.104.55.64     <none>        80/TCP           23h
-platformservice-srv       NodePort       10.111.229.151   <none>        80:32517/TCP     47h
-
-kubectl get pods
-NAME                             READY   STATUS    RESTARTS   AGE
-commands-depl-c4fcc556b-htfvc    1/1     Running   2          23h
-mssql-depl-856b8c48fd-qg4w6      1/1     Running   2          12m
-platforms-depl-7d9588c8f-lgftv   1/1     Running   2          24h
-
-kubectl apply -f .\rabbitmq-depl.yaml
-deployment.apps/rabbitmq-depl created
-service/rabbitmq-clusterip-srv created
-service/rabbitmq-loadbalance created
-
-kubectl get services
-NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                          AGE
-commands-clusterip-srv    ClusterIP      10.108.210.199   <none>        80/TCP                           4d8h
-kubernetes                ClusterIP      10.96.0.1        <none>        443/TCP                          6d7h
-mssql-clusterip-srv       ClusterIP      10.104.15.29     <none>        1433/TCP                         2d6h
-mssql-loadbalance         LoadBalancer   10.111.0.230     localhost     1433:30153/TCP                   2d6h
-platforms-clusterip-srv   ClusterIP      10.104.55.64     <none>        80/TCP                           4d8h
-platformservice-srv       NodePort       10.111.229.151   <none>        80:32517/TCP                     5d8h
-rabbitmq-clusterip-srv    ClusterIP      10.108.157.223   <none>        15672/TCP,5672/TCP               37s
-rabbitmq-loadbalance      LoadBalancer   10.103.7.24      localhost     15672:32267/TCP,5672:31001/TCP   37s
-
-kubectl get deployments
-NAME             READY   UP-TO-DATE   AVAILABLE   AGE
-commands-depl    1/1     1            1           4d8h
-mssql-depl       1/1     1            1           2d6h
-platforms-depl   1/1     1            1           2d7h
-rabbitmq-depl    1/1     1            1           98s
-
-kubectl get pods
-NAME                              READY   STATUS    RESTARTS   AGE
-commands-depl-c4fcc556b-htfvc     1/1     Running   8          4d8h
-mssql-depl-856b8c48fd-4bf84       1/1     Running   4          2d6h
-platforms-depl-687d4d5548-gzf52   1/1     Running   8          2d7h
-rabbitmq-depl-76f9ff665c-5v5l8    1/1     Running   0          106s
+External Client
+      │
+      ▼
+ NGINX Ingress (acme.com)
+   ┌────┴────┐
+   ▼         ▼
+PlatformService ──HTTP POST──► CommandService
+      │                              ▲
+      ├──RabbitMQ (fanout)───────────┘
+      │                              │
+      └──gRPC Server :666     gRPC Client (startup)
+      │                              │
+ PostgreSQL 16                  InMemory DB
 ```
+
+## Quick Start / 快速开始
+
+### Local Development
+
+```bash
+# PlatformService (https://localhost:5001)
+cd PlatformService && dotnet run
+
+# CommandService (https://localhost:6001)
+cd CommandService && dotnet run
+```
+
+Requires local PostgreSQL (dev uses InMemory) and RabbitMQ.
+
+### Build Docker Images
+
+```bash
+cd PlatformService && docker build -t huamu/platformservice:latest .
+cd CommandService && docker build -t huamu/commandservice:latest .
+```
+
+### Deploy to Kubernetes
+
+```bash
+# 1. Storage
+kubectl apply -f K8S/local-pvc.yaml
+
+# 2. PostgreSQL
+kubectl create secret generic postgres --from-literal=POSTGRES_PASSWORD="pa55w0rd!"
+kubectl apply -f K8S/postgres-depl.yaml
+
+# 3. RabbitMQ
+kubectl apply -f K8S/rabbitmq-depl.yaml
+
+# 4. Services
+kubectl apply -f K8S/platforms-depl.yaml
+kubectl apply -f K8S/platforms-np-srv.yaml
+kubectl apply -f K8S/commands-depl.yaml
+
+# 5. Ingress
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+kubectl apply -f K8S/ingress-srv.yaml
+```
+
+### EF Core Migrations (PlatformService)
+
+```bash
+cd PlatformService
+dotnet ef migrations add <Name>
+dotnet ef database update
+```
+
+Migrations apply automatically in Production environment via `PrepDb`.
+
+## API Endpoints
+
+### PlatformService
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/platform` | Get all platforms |
+| GET | `/api/platform/{id}` | Get platform by ID |
+| POST | `/api/platform` | Create platform (triggers sync + async publish) |
+
+### CommandService
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | `/api/cmd/platform` | Get all platforms |
+| POST | `/api/cmd/platform` | Test inbound connection |
+| GET | `/api/cmd/platforms/{platformId}/commands` | Get commands for a platform |
+| GET | `/api/cmd/platforms/{platformId}/commands/{commandId}` | Get specific command |
+| POST | `/api/cmd/platforms/{platformId}/commands` | Create command for a platform |
+
+### gRPC
+
+| Service | Method | Description |
+|---------|--------|-------------|
+| GrpcPlatform | `GetAllPlatforms` | Returns all platforms (PlatformService:666) |
+
+## Example Requests
+
+```bash
+# Create a platform
+curl -X POST http://acme.com/api/platform \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Kubernetes","publisher":"CNCF","cost":"Free"}'
+
+# Get all platforms
+curl http://acme.com/api/platform
+
+# Create a command for platform 1
+curl -X POST http://acme.com/api/cmd/platforms/1/commands \
+  -H "Content-Type: application/json" \
+  -d '{"howTo":"Deploy to cluster","commandLine":"kubectl apply -f deployment.yaml"}'
+```
+
+## K8S Resources
+
+| File | Resources |
+|------|----------|
+| `K8S/local-pvc.yaml` | PVC for PostgreSQL (200Mi, RWO) |
+| `K8S/postgres-depl.yaml` | PostgreSQL 16 Deployment + ClusterIP + LoadBalancer |
+| `K8S/rabbitmq-depl.yaml` | RabbitMQ 3 Management Deployment + ClusterIP + LoadBalancer |
+| `K8S/platforms-depl.yaml` | PlatformService Deployment + ClusterIP (80 + 666 gRPC) |
+| `K8S/platforms-np-srv.yaml` | NodePort for external PlatformService access |
+| `K8S/commands-depl.yaml` | CommandService Deployment + ClusterIP |
+| `K8S/ingress-srv.yaml` | NGINX Ingress routing rules |

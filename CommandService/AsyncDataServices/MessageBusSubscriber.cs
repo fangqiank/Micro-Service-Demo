@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,76 +10,105 @@ using RabbitMQ.Client.Events;
 
 namespace CommandService.AsyncDataServices
 {
-    public class MessageBusSubscriber: BackgroundService
+    public class MessageBusSubscriber : BackgroundService
     {
         private readonly IConfiguration _configuration;
         private readonly IEventProcessor _processor;
-        private IConnection _connection;
-        private IModel _channel;
-        private string _queueName;
+        private IConnection? _connection;
+        private IChannel? _channel;
+        private string _queueName = string.Empty;
 
         public MessageBusSubscriber(IConfiguration configuration, IEventProcessor processor)
         {
             _configuration = configuration;
             _processor = processor;
-
-            InitializeRabbitMq();
         }
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             stoppingToken.ThrowIfCancellationRequested();
 
-            var consumer = new EventingBasicConsumer(_channel);
-
-            consumer.Received += (moduleHandle, ea) =>
-            {
-                Console.WriteLine("--> Event received");
-
-                var body = ea.Body;
-                var notificationMsg = Encoding.UTF8.GetString(body.ToArray());
-
-                _processor.ProcessEvent(notificationMsg);
-            };
-
-            _channel.BasicConsume(queue: _queueName, autoAck: true, consumer: consumer);
-
-            return Task.CompletedTask;
-        }
-
-        private void InitializeRabbitMq()
-        {
             var factory = new ConnectionFactory
             {
                 HostName = _configuration["RabbitMQHost"],
-                Port = int.Parse(_configuration["RabbitMQPort"])
+                Port = int.Parse(_configuration["RabbitMQPort"]!)
             };
 
-            //Console.WriteLine($"Hostname: {_configuration["RabbitMQHost"]}");
-            //Console.WriteLine($"Port: {_configuration["RabbitMQPort"]}");
+            const int maxRetries = 5;
+            const int delayMs = 5000;
 
-            _connection = factory.CreateConnection();
-            _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare(exchange:"trigger", type:ExchangeType.Fanout);
-            _queueName = _channel.QueueDeclare().QueueName;
-            _channel.QueueBind(queue:_queueName, exchange:"trigger", routingKey:"");
-
-            Console.WriteLine("--> Listening on the message bus...");
-
-            _connection.ConnectionShutdown += RabbitMQ_ConnectionShutdown;
-        }
-
-        private void RabbitMQ_ConnectionShutdown(object? sender, ShutdownEventArgs e)
-        {
-            Console.WriteLine("--> Connection Shutdown");
-        }
-
-        public override void Dispose()
-        {
-            if (_channel.IsOpen)
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                _channel.Close();
-                _connection.Close();
+                try
+                {
+                    _connection = await factory.CreateConnectionAsync(stoppingToken);
+                    _channel = await _connection.CreateChannelAsync(cancellationToken: stoppingToken);
+
+                    await _channel.ExchangeDeclareAsync(exchange: "trigger", type: ExchangeType.Fanout,
+                        cancellationToken: stoppingToken);
+
+                    var queueDeclareResult = await _channel.QueueDeclareAsync(cancellationToken: stoppingToken);
+                    _queueName = queueDeclareResult.QueueName;
+
+                    await _channel.QueueBindAsync(queue: _queueName, exchange: "trigger", routingKey: "",
+                        cancellationToken: stoppingToken);
+
+                    _connection.ConnectionShutdownAsync += (_, _) =>
+                    {
+                        Console.WriteLine("--> Connection Shutdown");
+                        return Task.CompletedTask;
+                    };
+
+                    Console.WriteLine("--> Listening on the message bus...");
+
+                    var consumer = new AsyncEventingBasicConsumer(_channel);
+
+                    consumer.ReceivedAsync += async (model, ea) =>
+                    {
+                        Console.WriteLine("--> Event received");
+
+                        var body = ea.Body.ToArray();
+                        var notificationMsg = Encoding.UTF8.GetString(body);
+
+                        _processor.ProcessEvent(notificationMsg);
+                    };
+
+                    await _channel.BasicConsumeAsync(queue: _queueName, autoAck: true, consumer: consumer,
+                        cancellationToken: stoppingToken);
+
+                    // Keep the background task alive until cancellation is requested
+                    await Task.Delay(Timeout.Infinite, stoppingToken);
+                    return;
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("--> MessageBusSubscriber stopped");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"--> RabbitMQ connection attempt {attempt}/{maxRetries} failed: {ex.Message}");
+
+                    if (attempt < maxRetries)
+                    {
+                        Console.WriteLine($"--> Retrying in {delayMs}ms...");
+                        await Task.Delay(delayMs, stoppingToken);
+                    }
+                }
+            }
+
+            Console.WriteLine($"--> Could not connect to RabbitMQ after {maxRetries} attempts");
+        }
+
+        public override async void Dispose()
+        {
+            if (_channel?.IsOpen == true)
+            {
+                await _channel.CloseAsync();
+            }
+            if (_connection?.IsOpen == true)
+            {
+                await _connection.CloseAsync();
             }
 
             base.Dispose();

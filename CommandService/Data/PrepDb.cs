@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CommandService.Models;
 using CommandService.SyncDataServices.Grpc;
@@ -17,7 +17,14 @@ namespace CommandService.Data
 
                 var platforms = grpcClient.ReturnAllPlatforms();
 
-                SeedData(scope.ServiceProvider.GetService<ICommandRepo>(), platforms);
+                if (platforms != null)
+                {
+                    SeedData(scope.ServiceProvider.GetService<ICommandRepo>(), platforms);
+                }
+                else
+                {
+                    Console.WriteLine("--> Could not retrieve platforms from gRPC server");
+                }
             }
         }
 

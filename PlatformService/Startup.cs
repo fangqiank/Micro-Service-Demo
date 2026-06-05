@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.SyncDataServices.Grpc;
@@ -26,22 +26,14 @@ namespace PlatformService
             Configuration = configuration;
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            /*Console.WriteLine("--> Using SqlServer Db ");
-            services.AddDbContext<AppDbContext>(opt =>
-            {
-                opt.UseSqlServer(Configuration.GetConnectionString("PlatformsConn"));
-            });*/
-
-            
             if (_env.IsProduction())
             {
-                Console.WriteLine("--> Using SqlServer Db ");
+                Console.WriteLine("--> Using PostgreSQL Db");
                 services.AddDbContext<AppDbContext>(opt =>
                 {
-                    opt.UseSqlServer(Configuration.GetConnectionString("PlatformsConn"));
+                    opt.UseNpgsql(Configuration.GetConnectionString("PlatformsConn"));
                 });
             }
             else
@@ -52,7 +44,6 @@ namespace PlatformService
                     options.UseInMemoryDatabase("InMemory");
                 });
             }
-            
 
             services.AddScoped<IPlatformRepo, PlatformRepo>();
 
@@ -60,11 +51,11 @@ namespace PlatformService
 
             services.AddGrpc();
 
-            services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>(); //http client inject
-            
+            services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
+
             services.AddControllers();
-            
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddAutoMapper(cfg => { }, typeof(Startup).Assembly);
 
             services.AddSwaggerGen(c =>
             {
@@ -74,7 +65,6 @@ namespace PlatformService
             Console.WriteLine($"--> Command Service Endpoint {Configuration["CommandService"]}");
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -84,8 +74,6 @@ namespace PlatformService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "PlatformService v1"));
             }
 
-            //app.UseHttpsRedirection(); //Issue a warning: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3],Failed to determine the https port for redirect.
-            
             app.UseRouting();
 
             app.UseAuthorization();

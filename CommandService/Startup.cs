@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace CommandService
 {
@@ -29,7 +29,7 @@ namespace CommandService
 
             services.AddSingleton<IEventProcessor, EventProcessor>();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(cfg => { }, typeof(Startup).Assembly);
 
             services.AddScoped<IPlatformDataClient, PlatformDataClient>();
 

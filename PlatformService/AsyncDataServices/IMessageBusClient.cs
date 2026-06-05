@@ -1,9 +1,11 @@
-﻿using PlatformService.Dtos;
+using System;
+using System.Threading.Tasks;
+using PlatformService.Dtos;
 
 namespace PlatformService.AsyncDataServices
 {
-    public interface IMessageBusClient
+    public interface IMessageBusClient : IAsyncDisposable
     {
-        void PublishNewPlatform(PlatformPublishDto platform);
+        Task PublishNewPlatformAsync(PlatformPublishDto platform);
     }
 }
