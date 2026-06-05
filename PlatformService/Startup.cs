@@ -59,9 +59,19 @@ namespace PlatformService
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
+                    if (env.IsDevelopment())
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
+                    }
+                    else
+                    {
+                        // In K8S, traffic comes through NGINX Ingress on the same origin
+                        policy.AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .AllowCredentials();
+                    }
                 });
             });
 
@@ -93,7 +103,8 @@ namespace PlatformService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGrpcService<GrpcPlatformService>().RequireHost("*:5000")
+                endpoints.MapGrpcService<GrpcPlatformService>()
+                    .RequireHost(env.IsDevelopment() ? "*:5000" : "*:666")
                     .EnableGrpcWeb();
 
                 endpoints.MapGet("/protos/platforms.proto", async ctx =>

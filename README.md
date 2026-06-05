@@ -35,7 +35,7 @@ A .NET 10 microservices demo with Kubernetes deployment, demonstrating synchrono
 4. **External Access**: NGINX Ingress routes `acme.com/api/platform` → PlatformService, `acme.com/api/cmd/platform` → CommandService
 
 ```
-External Client
+External Client / Frontend (:3000)
       │
       ▼
  NGINX Ingress (acme.com)
@@ -43,10 +43,10 @@ External Client
    ▼         ▼
 PlatformService ──HTTP POST──► CommandService
       │                              ▲
-      ├──RabbitMQ (fanout)───────────┘
+      ├──RabbitMQ (fanout)───────────┤
       │                              │
       └──gRPC Server :666     gRPC Client (startup)
-      │                              │
+      │
  PostgreSQL 16                  InMemory DB
 ```
 

@@ -80,7 +80,7 @@ function renderPlatformOptions(platforms, selectElement, selectedId) {
     });
 }
 
-function renderStatusCard(serviceKey, result, container) {
+function renderStatusCard(serviceKey, result) {
     const dot = document.getElementById(`dot-${serviceKey}`);
     const detail = document.getElementById(`detail-${serviceKey}`);
     const time = document.getElementById(`time-${serviceKey}`);

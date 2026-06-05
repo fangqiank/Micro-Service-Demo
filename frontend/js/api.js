@@ -65,6 +65,6 @@ const CommandAPI = {
         });
     },
     testConnection() {
-        return apiCall(`${CONFIG.commandService}/api/cmd/platform`, { method: 'POST' });
+        return apiCall(`${CONFIG.commandService}/api/cmd/platform`);
     }
 };

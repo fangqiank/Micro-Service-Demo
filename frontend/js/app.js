@@ -226,7 +226,8 @@
 
         const result = await CommandAPI.testConnection();
         if (result.ok) {
-            resultEl.textContent = `Success: ${result.data}`;
+            const count = Array.isArray(result.data) ? result.data.length : 0;
+            resultEl.textContent = `Success: CommandService reachable (${count} platform(s) synced)`;
             resultEl.style.color = 'var(--color-green)';
         } else {
             resultEl.textContent = `Failed: ${result.error}`;

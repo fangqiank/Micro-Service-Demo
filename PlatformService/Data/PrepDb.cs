@@ -57,7 +57,7 @@ namespace PlatformService.Data
                                 Name = platform.Name,
                                 Publisher = platform.Publisher,
                                 Cost = platform.Cost
-                            }).Wait();
+                            }).GetAwaiter().GetResult();
                         }
                         catch (Exception ex)
                         {

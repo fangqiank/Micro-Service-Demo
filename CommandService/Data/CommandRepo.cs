@@ -19,10 +19,7 @@ namespace CommandService.Data
 
         public void CreatePlatform(Platform platform)
         {
-            if (platform == null)
-            {
-                throw new ArgumentNullException(nameof(platform));
-            }
+            ArgumentNullException.ThrowIfNull(platform);
 
             ctx.Platforms.Add(platform);
         }
@@ -53,8 +50,7 @@ namespace CommandService.Data
 
         public void CreateCommand(int platformId, Command command)
         {
-            if (command is null)
-                throw new ArgumentNullException(nameof(command));
+            ArgumentNullException.ThrowIfNull(command);
 
             command.PlatformId = platformId;
 

@@ -12,7 +12,7 @@ using Microsoft.OpenApi;
 
 namespace CommandService
 {
-    public class Startup
+    public class Startup(IWebHostEnvironment env)
     {
         public void ConfigureServices(IServiceCollection services)
         {
@@ -37,9 +37,18 @@ namespace CommandService
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
+                    if (env.IsDevelopment())
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
+                    }
+                    else
+                    {
+                        policy.AllowAnyMethod()
+                              .AllowAnyHeader()
+                              .AllowCredentials();
+                    }
                 });
             });
 
