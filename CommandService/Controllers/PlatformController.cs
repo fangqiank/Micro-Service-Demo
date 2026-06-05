@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AutoMapper;
 using CommandService.Data;
 using CommandService.Dtos;
+using CommandService.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CommandService.Controllers
@@ -22,11 +23,22 @@ namespace CommandService.Controllers
         }
 
         [HttpPost]
-        public ActionResult TestInboundConnection()
+        public ActionResult<PlatformReadDto> CreatePlatform(PlatformReadDto platformDto)
         {
-            Console.WriteLine("--> Inbound POST # Command Service");
+            Console.WriteLine($"--> Inbound POST # Command Service (platform sync, Id={platformDto.Id})");
 
-            return Ok("Inbound test of from Platforms Controller");
+            var platform = mapper.Map<Platform>(platformDto);
+
+            if (!repo.ExternalPlatformExists(platform.ExternalId))
+            {
+                repo.CreatePlatform(platform);
+                repo.SaveChanges();
+                Console.WriteLine($"--> Platform synced: ExternalId={platform.ExternalId}, Name={platform.Name}");
+                return Ok(mapper.Map<PlatformReadDto>(platform));
+            }
+
+            Console.WriteLine($"--> Platform already exists: ExternalId={platform.ExternalId}");
+            return Ok(mapper.Map<PlatformReadDto>(platform));
         }
     }
 }

@@ -47,13 +47,23 @@ namespace PlatformService
 
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
-            services.AddGrpc();
+            services.AddGrpc(opt => opt.EnableDetailedErrors = true);
 
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
 
             services.AddControllers();
 
             services.AddAutoMapper(cfg => { }, typeof(Startup).Assembly);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -74,12 +84,17 @@ namespace PlatformService
 
             app.UseRouting();
 
+            app.UseGrpcWeb();
+
+            app.UseCors("AllowFrontend");
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapGrpcService<GrpcPlatformService>();
+                endpoints.MapGrpcService<GrpcPlatformService>().RequireHost("*:5000")
+                    .EnableGrpcWeb();
 
                 endpoints.MapGet("/protos/platforms.proto", async ctx =>
                 {

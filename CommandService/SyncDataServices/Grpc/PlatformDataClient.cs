@@ -4,6 +4,8 @@ using AutoMapper;
 using CommandService.Models;
 using Grpc.Core;
 using Grpc.Net.Client;
+using System.Net.Http;
+using Grpc.Net.Client.Web;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using PlatformService;
@@ -17,7 +19,10 @@ namespace CommandService.SyncDataServices.Grpc
         {
             logger.LogInformation("--> Calling GRPC Service {GrpcUrl}", configuration["GrpcPlatform"]);
 
-            using var channel = GrpcChannel.ForAddress(configuration["GrpcPlatform"]);
+            using var channel = GrpcChannel.ForAddress(configuration["GrpcPlatform"], new GrpcChannelOptions
+            {
+                HttpHandler = new global::Grpc.Net.Client.Web.GrpcWebHandler(new HttpClientHandler())
+            });
             var client = new GrpcPlatform.GrpcPlatformClient(channel);
             var request = new GetAllRequest();
 

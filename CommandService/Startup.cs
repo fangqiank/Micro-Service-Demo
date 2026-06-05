@@ -33,6 +33,16 @@ namespace CommandService
 
             services.AddScoped<IPlatformDataClient, PlatformDataClient>();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CommandsService", Version = "v1" });
@@ -47,6 +57,8 @@ namespace CommandService
             }
 
             app.UseRouting();
+
+            app.UseCors("AllowFrontend");
 
             app.UseEndpoints(endpoints =>
             {

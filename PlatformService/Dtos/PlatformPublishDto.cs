@@ -1,6 +1,6 @@
 ﻿namespace PlatformService.Dtos
 {
-    public class PlatformPublishDto
+    public record PlatformPublishDto
     {
         public int Id { get; init; }
         public string Name { get; init; }
